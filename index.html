@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Mwuah 💋</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#ff5fa2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Mwuah" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/layout.css" />
+  <link rel="stylesheet" href="styles/pages.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <a class="brand" href="#/">
+        <span class="brand__mark">💋</span>
+        <span>Mwuah</span>
+      </a>
+      <div class="topbar__right">
+        <span id="demoPill"></span>
+        <span class="userchip" id="userchip"></span>
+        <button class="btn btn--icon btn--ghost" id="logoutBtn" title="Sign out" aria-label="Sign out">🚪</button>
+      </div>
+    </header>
+
+    <main id="content" class="container"></main>
+
+    <nav class="bottomnav">
+      <a class="navitem" data-route="/" href="#/">
+        <span class="navitem__icon">🏠</span><span class="navitem__label">Home</span>
+      </a>
+      <a class="navitem" data-route="/expenses" href="#/expenses">
+        <span class="navitem__icon">💸</span><span class="navitem__label">Spends</span>
+      </a>
+      <a class="navitem" data-route="/cycle" href="#/cycle">
+        <span class="navitem__icon">🌸</span><span class="navitem__label">Cycle</span>
+      </a>
+      <a class="navitem" data-route="/notes" href="#/notes">
+        <span class="navitem__icon">📝</span><span class="navitem__label">Notes</span>
+      </a>
+      <a class="navitem" data-route="/bucket" href="#/bucket">
+        <span class="navitem__icon">✨</span><span class="navitem__label">Bucket</span>
+      </a>
+      <a class="navitem" data-route="/memories" href="#/memories">
+        <span class="navitem__icon">📸</span><span class="navitem__label">Memories</span>
+      </a>
+      <a class="navitem" data-route="/dates" href="#/dates">
+        <span class="navitem__icon">📅</span><span class="navitem__label">Dates</span>
+      </a>
+    </nav>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

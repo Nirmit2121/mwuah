@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Mwuah 💋</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#ff5fa2" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Mwuah" />
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png" />
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles/tokens.css" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/pages.css" />
+</head>
+<body>
+  <div class="login-wrap">
+    <form class="login-card" id="loginForm">
+      <span class="brand__mark">💋</span>
+      <h1>Mwuah</h1>
+      <p class="tag">our little world 💞</p>
+
+      <div class="who-pick" id="whoPick"></div>
+
+      <div class="field">
+        <input class="input" id="passInput" type="password" placeholder="secret passcode" autocomplete="off" />
+      </div>
+
+      <button class="btn btn--primary btn--block" type="submit" id="enterBtn">Enter 💕</button>
+      <div class="login-error" id="loginError"></div>
+    </form>
+  </div>
+
+  <script type="module">
+    import { PEOPLE } from './js/config.js';
+    import { unlock, setWho, whoami, isUnlocked } from './js/auth.js';
+
+    // already in? go straight through
+    if (isUnlocked() && whoami()) window.location.href = 'index.html';
+
+    let selected = whoami()?.key || null;
+    const pick = document.getElementById('whoPick');
+    pick.innerHTML = Object.values(PEOPLE).map((p) => `
+      <button type="button" class="who-btn ${selected === p.key ? 'is-sel' : ''}" data-who="${p.key}">
+        <span class="av" style="background:${p.color}">${p.emoji}</span>
+        <span>${p.name}</span>
+      </button>`).join('');
+
+    pick.addEventListener('click', (e) => {
+      const btn = e.target.closest('.who-btn');
+      if (!btn) return;
+      selected = btn.dataset.who;
+      pick.querySelectorAll('.who-btn').forEach((b) => b.classList.toggle('is-sel', b === btn));
+    });
+
+    const err = document.getElementById('loginError');
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      err.textContent = '';
+      if (!selected) { err.textContent = 'Pick who you are first 👆'; return; }
+      const btn = document.getElementById('enterBtn');
+      btn.disabled = true; btn.textContent = 'Unlocking…';
+      try {
+        await unlock(document.getElementById('passInput').value);
+        setWho(selected);
+        window.location.href = 'index.html';
+      } catch (ex) {
+        err.textContent = ex.message || 'Could not enter';
+        btn.disabled = false; btn.textContent = 'Enter 💕';
+      }
+    });
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    }
+  </script>
+</body>
+</html>
