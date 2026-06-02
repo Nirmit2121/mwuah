@@ -1,9 +1,10 @@
 // Mwuah — home dashboard 🏠
-import { expenses, moods, taps, notes, cycles, events, savings } from '../api.js';
+import { expenses, moods, taps, notes, cycles, events, savings, meds } from '../api.js';
 import { whoami, partnerOf } from '../auth.js';
 import { ANNIVERSARY, PEOPLE } from '../config.js';
 import { summarize } from './cycle.js';
 import { upcoming } from './dates.js';
+import { status as medStatus } from './meds.js';
 import { money, todayStr, parseYmd, daysBetween, timeAgo, escapeHtml, heartBurst, prettyDate } from '../ui.js';
 import { toast } from '../state.js';
 import { navigate } from '../router.js';
@@ -19,7 +20,7 @@ export async function mountHome({ content }) {
 
   let data = {};
   async function load() {
-    const [exp, mds, tps, nts, cyc, evs, sav] = await Promise.all([
+    const [exp, mds, tps, nts, cyc, evs, sav, med] = await Promise.all([
       expenses.list({ orderBy: 'spent_on', ascending: false }),
       moods.list({ orderBy: 'day', ascending: false }),
       taps.list({ orderBy: 'created_at', ascending: false }),
@@ -27,15 +28,17 @@ export async function mountHome({ content }) {
       cycles.list({ orderBy: 'start_date', ascending: true }),
       events.list({ orderBy: 'date', ascending: true }),
       savings.list({ orderBy: 'saved_on', ascending: false }),
+      meds.list({ orderBy: 'start_date', ascending: false }),
     ]);
-    data = { exp, mds, tps, nts, cyc, evs, sav };
+    data = { exp, mds, tps, nts, cyc, evs, sav, med };
     render();
   }
 
   function render() {
-    const { exp, mds, tps, nts, cyc, evs, sav } = data;
-    const totalSaved = sav.reduce((a, s) => a + Number(s.amount || 0), 0);
+    const { exp, mds, tps, nts, cyc, evs, sav, med } = data;
     const today = todayStr();
+    const totalSaved = sav.reduce((a, s) => a + Number(s.amount || 0), 0);
+    const medsToday = med.filter((m) => medStatus(m, today).state === 'active').length;
     const start = parseYmd(ANNIVERSARY);
     const together = Math.max(0, daysBetween(parseYmd(today), start));
 
@@ -100,6 +103,7 @@ export async function mountHome({ content }) {
         ${tile('💸', money(monthSpend), 'spent this month', '/expenses')}
         ${tile('🐷', money(totalSaved), 'saved together', '/savings')}
         ${tile('🌸', cycleLine, "Akkshita's cycle", '/cycle')}
+        ${medsToday ? tile('💊', medsToday + '', medsToday === 1 ? 'medicine today' : 'medicines today', '/meds') : ''}
       </div>
 
       ${nts.length ? `

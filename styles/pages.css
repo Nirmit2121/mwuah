@@ -134,6 +134,20 @@
   font-weight: 800; color: var(--ink);
 }
 
+/* ---------- Medicines ---------- */
+.med-info { margin-top: 4px; }
+.med-bubble {
+  margin-top: 12px; padding: 14px 16px; border-radius: 16px 16px 16px 4px;
+  background: var(--grape-soft); color: var(--ink); font-weight: 600; line-height: 1.45;
+  animation: pop-in 200ms var(--ease);
+}
+.med-disclaimer { margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--muted); }
+.med-card { margin-bottom: 12px; }
+.med-card.is-taken { background: var(--mint-soft); }
+.med-card__main { display: flex; align-items: center; gap: 12px; }
+.med-card__pill { font-size: 22px; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: var(--bg); flex: none; }
+.med-card__name { font-weight: 800; font-family: var(--font-display); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
 /* ---------- Savings ---------- */
 .goal-card { margin-bottom: 16px; }
 .goal-card__head { display: flex; align-items: center; gap: 12px; }

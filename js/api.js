@@ -2,7 +2,7 @@
 import { isConfigured, getSb } from './supabase.js';
 
 const DEMO_KEY = 'mwuah-demo-data';
-const TABLES = ['expenses', 'cycles', 'notes', 'bucket', 'moods', 'taps', 'memories', 'events', 'goals', 'savings'];
+const TABLES = ['expenses', 'cycles', 'notes', 'bucket', 'moods', 'taps', 'memories', 'events', 'goals', 'savings', 'meds', 'med_logs'];
 
 // ---------- demo store ----------
 function readDemo() {
@@ -103,6 +103,8 @@ export const memories = makeRepo('memories');
 export const events   = makeRepo('events');
 export const goals    = makeRepo('goals');
 export const savings  = makeRepo('savings');
+export const meds     = makeRepo('meds');
+export const medLogs  = makeRepo('med_logs');
 
 // ---------- photo upload ----------
 const MAX_DEMO_BYTES = 1.6 * 1024 * 1024; // ~1.6 MB data-URL cap for demo mode
