@@ -6,17 +6,17 @@ export const SUPABASE_URL = '';
 export const SUPABASE_ANON_KEY = '';
 
 // When Supabase is configured, both phones sign into ONE shared account.
-// Create this user once in your Supabase dashboard (Authentication → Add user)
-// and put the same credentials here.
+// Create this user once in your Supabase dashboard (Authentication → Add user).
+// Its PASSWORD is your secret passcode — set it there, never written here.
 export const SHARED_EMAIL = '';
-export const SHARED_PASSWORD = '';
 
-// Passcode to enter the app (works in demo AND cloud mode). Change it to your own secret.
-export const APP_PASSCODE = 'mwuah';
+// Passcode used ONLY in demo mode (no Supabase). In cloud mode the passcode is the
+// shared account's password, verified by Supabase — so this value is ignored.
+export const APP_PASSCODE = '13may';
 
 // The two of you 💞 — rename freely.
 export const PEOPLE = {
-  nirmit:   { key: 'nirmit',   name: 'Nirmit',   color: '#38bdf8', emoji: '🐻' },
+  nirmit: { key: 'nirmit', name: 'Nirmit', color: '#38bdf8', emoji: '🐻' },
   akkshita: { key: 'akkshita', name: 'Akkshita', color: '#ff5fa2', emoji: '🌸' },
 };
 

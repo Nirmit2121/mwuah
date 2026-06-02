@@ -1,5 +1,5 @@
 // Mwuah — home dashboard 🏠
-import { expenses, moods, taps, notes, cycles, answers, events } from '../api.js';
+import { expenses, moods, taps, notes, cycles, answers, events, savings } from '../api.js';
 import { whoami, partnerOf } from '../auth.js';
 import { ANNIVERSARY, PEOPLE } from '../config.js';
 import { summarize } from './cycle.js';
@@ -21,7 +21,7 @@ export async function mountHome({ content }) {
 
   let data = {};
   async function load() {
-    const [exp, mds, tps, nts, cyc, ans, evs] = await Promise.all([
+    const [exp, mds, tps, nts, cyc, ans, evs, sav] = await Promise.all([
       expenses.list({ orderBy: 'spent_on', ascending: false }),
       moods.list({ orderBy: 'day', ascending: false }),
       taps.list({ orderBy: 'created_at', ascending: false }),
@@ -29,13 +29,15 @@ export async function mountHome({ content }) {
       cycles.list({ orderBy: 'start_date', ascending: true }),
       answers.list({ orderBy: 'day', ascending: false }),
       events.list({ orderBy: 'date', ascending: true }),
+      savings.list({ orderBy: 'saved_on', ascending: false }),
     ]);
-    data = { exp, mds, tps, nts, cyc, ans, evs };
+    data = { exp, mds, tps, nts, cyc, ans, evs, sav };
     render();
   }
 
   function render() {
-    const { exp, mds, tps, nts, cyc, ans, evs } = data;
+    const { exp, mds, tps, nts, cyc, ans, evs, sav } = data;
+    const totalSaved = sav.reduce((a, s) => a + Number(s.amount || 0), 0);
     const today = todayStr();
     const start = parseYmd(ANNIVERSARY);
     const together = Math.max(0, daysBetween(parseYmd(today), start));
@@ -106,8 +108,8 @@ export async function mountHome({ content }) {
 
       <div class="grid grid--3" style="margin-top:16px">
         ${tile('💸', money(monthSpend), 'spent this month', '/expenses')}
+        ${tile('🐷', money(totalSaved), 'saved together', '/savings')}
         ${tile('🌸', cycleLine, "Akkshita's cycle", '/cycle')}
-        ${tile('📝', nts.length + '', 'sticky notes', '/notes')}
       </div>
 
       ${nts.length ? `

@@ -10,6 +10,7 @@ import { mountBucket } from './pages/bucket.js';
 import { mountMemories } from './pages/memories.js';
 import { mountDaily } from './pages/daily.js';
 import { mountDates } from './pages/dates.js';
+import { mountSavings } from './pages/savings.js';
 import { startPetals } from './effects.js';
 
 function paintUserChip() {
@@ -43,6 +44,7 @@ function registerRoutes() {
   route('/memories',  mountMemories);
   route('/dates',     mountDates);
   route('/daily',     mountDaily);
+  route('/savings',   mountSavings);
 }
 
 function boot() {

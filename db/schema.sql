@@ -85,6 +85,25 @@ create table if not exists public.events (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.goals (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  target numeric not null,
+  emoji text default '🐷',
+  author text not null,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.savings (
+  id uuid primary key default gen_random_uuid(),
+  goal_id uuid references public.goals(id) on delete cascade,
+  author text not null,
+  amount numeric not null,
+  note text,
+  saved_on date not null default now(),
+  created_at timestamptz not null default now()
+);
+
 -- helpful indexes for list views
 create index if not exists expenses_spent_idx on public.expenses(spent_on desc);
 create index if not exists cycles_start_idx   on public.cycles(start_date);
@@ -92,13 +111,14 @@ create index if not exists notes_created_idx   on public.notes(created_at desc);
 create index if not exists memories_taken_idx  on public.memories(taken_on desc);
 create index if not exists answers_day_idx     on public.answers(day desc);
 create index if not exists events_date_idx     on public.events(date);
+create index if not exists savings_goal_idx    on public.savings(goal_id);
 
 -- ---------- row level security ----------
 -- Private 2-person app behind one shared login: any signed-in user can read/write.
 do $$
 declare t text;
 begin
-  foreach t in array array['expenses','cycles','notes','bucket','moods','taps','memories','answers','events']
+  foreach t in array array['expenses','cycles','notes','bucket','moods','taps','memories','answers','events','goals','savings']
   loop
     execute format('alter table public.%I enable row level security;', t);
     execute format('drop policy if exists "%s_authed_rw" on public.%I;', t, t);

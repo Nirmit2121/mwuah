@@ -37,20 +37,20 @@ Passcode (demo default): **`mwuah`** — change it in `js/config.js`.
 1. Create a free project at [supabase.com](https://supabase.com).
 2. **SQL Editor → New query →** paste all of [`db/schema.sql`](db/schema.sql) → **Run**.
    (Creates the tables, security rules, and the `memories` photo bucket.)
-3. **Authentication → Users → Add user:** make ONE shared account
-   (e.g. `us@mwuah.app` + a password). This is the account both of you sign in through.
+3. **Authentication → Users → Add user → Create new user** (keep **Auto Confirm User** on):
+   make ONE shared account, e.g. `us@mwuah.app`. **Its password is your secret passcode** —
+   this is what you both type to enter Mwuah. The password is never written into the code.
 4. **Project Settings → API:** copy the **Project URL** and **anon public** key.
-5. Fill in [`js/config.js`](js/config.js):
+5. Fill in [`js/config.js`](js/config.js) (no password here — only the email):
 
    ```js
    export const SUPABASE_URL = 'https://YOUR-PROJECT.supabase.co';
-   export const SUPABASE_ANON_KEY = 'your-anon-key';
+   export const SUPABASE_ANON_KEY = 'your-anon-key';   // safe to expose; protected by RLS
    export const SHARED_EMAIL = 'us@mwuah.app';
-   export const SHARED_PASSWORD = 'the-password-you-set';
-   export const APP_PASSCODE = 'pick-your-secret';
    ```
 
-That's it — reload and the "DEMO" tag disappears. Everything now syncs. 💞
+That's it — reload and the "DEMO" tag disappears. Sign in with the passcode you set as the
+user's password and everything syncs. 💞 (`APP_PASSCODE` is only used in demo mode.)
 
 ## Make it yours
 

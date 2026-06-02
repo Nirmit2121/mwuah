@@ -1,6 +1,6 @@
 // Mwuah — passcode gate + "who am I" profile. Works in demo and cloud mode.
 import { isConfigured, getSb } from './supabase.js';
-import { APP_PASSCODE, SHARED_EMAIL, SHARED_PASSWORD, PEOPLE } from './config.js';
+import { APP_PASSCODE, SHARED_EMAIL, PEOPLE } from './config.js';
 
 const PASS_KEY = 'mwuah-unlocked';
 const WHO_KEY  = 'mwuah-who';
@@ -19,16 +19,16 @@ export function partnerOf(key) {
   return PEOPLE[other] || null;
 }
 
-// Validate passcode (and sign into the shared Supabase account if configured).
+// Validate the passcode. In cloud mode the passcode IS the shared account's password —
+// it's verified by Supabase and never stored in the code.
 export async function unlock(passcode) {
-  if (passcode !== APP_PASSCODE) throw new Error('Wrong passcode 🙈');
   if (isConfigured) {
-    if (!SHARED_EMAIL || !SHARED_PASSWORD) {
-      throw new Error('Shared account not set in config.js');
-    }
+    if (!SHARED_EMAIL) throw new Error('Shared account email not set in config.js');
     const sb = await getSb();
-    const { error } = await sb.auth.signInWithPassword({ email: SHARED_EMAIL, password: SHARED_PASSWORD });
-    if (error) throw new Error('Could not reach the shared account. Check config.js / Supabase.');
+    const { error } = await sb.auth.signInWithPassword({ email: SHARED_EMAIL, password: passcode });
+    if (error) throw new Error('Wrong passcode 🙈');
+  } else {
+    if (passcode !== APP_PASSCODE) throw new Error('Wrong passcode 🙈');
   }
   sessionStorage.setItem(PASS_KEY, '1');
 }
