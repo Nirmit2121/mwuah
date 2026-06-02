@@ -1,10 +1,8 @@
 // Mwuah — home dashboard 🏠
-import { expenses, moods, taps, notes, cycles, answers, events, savings } from '../api.js';
+import { expenses, moods, taps, notes, cycles, events, savings } from '../api.js';
 import { whoami, partnerOf } from '../auth.js';
 import { ANNIVERSARY, PEOPLE } from '../config.js';
 import { summarize } from './cycle.js';
-import { questionForDay } from '../questions.js';
-import { saveTodayAnswer } from './daily.js';
 import { upcoming } from './dates.js';
 import { money, todayStr, parseYmd, daysBetween, timeAgo, escapeHtml, heartBurst, prettyDate } from '../ui.js';
 import { toast } from '../state.js';
@@ -21,22 +19,21 @@ export async function mountHome({ content }) {
 
   let data = {};
   async function load() {
-    const [exp, mds, tps, nts, cyc, ans, evs, sav] = await Promise.all([
+    const [exp, mds, tps, nts, cyc, evs, sav] = await Promise.all([
       expenses.list({ orderBy: 'spent_on', ascending: false }),
       moods.list({ orderBy: 'day', ascending: false }),
       taps.list({ orderBy: 'created_at', ascending: false }),
       notes.list({ orderBy: 'created_at', ascending: false }),
       cycles.list({ orderBy: 'start_date', ascending: true }),
-      answers.list({ orderBy: 'day', ascending: false }),
       events.list({ orderBy: 'date', ascending: true }),
       savings.list({ orderBy: 'saved_on', ascending: false }),
     ]);
-    data = { exp, mds, tps, nts, cyc, ans, evs, sav };
+    data = { exp, mds, tps, nts, cyc, evs, sav };
     render();
   }
 
   function render() {
-    const { exp, mds, tps, nts, cyc, ans, evs, sav } = data;
+    const { exp, mds, tps, nts, cyc, evs, sav } = data;
     const totalSaved = sav.reduce((a, s) => a + Number(s.amount || 0), 0);
     const today = todayStr();
     const start = parseYmd(ANNIVERSARY);
@@ -60,11 +57,6 @@ export async function mountHome({ content }) {
       ? (cs.daysUntil >= 0 ? `next period in ${cs.daysUntil}d` : `${Math.abs(cs.daysUntil)}d late`)
       : 'no data yet';
 
-    // daily question
-    const question = questionForDay(today);
-    const myAnswer = ans.find((a) => a.author === me.key && a.day === today);
-    const partnerAnswer = ans.find((a) => a.author === partner.key && a.day === today);
-
     // next important date
     const nextDate = upcoming(evs)[0];
 
@@ -76,8 +68,6 @@ export async function mountHome({ content }) {
       </div>
 
       ${careBanner(me, cs)}
-
-      ${dailyCard(question, myAnswer, partnerAnswer, partner)}
 
       <div class="grid grid--2" style="margin-top:16px">
         <div class="card tap-card">
@@ -138,16 +128,6 @@ export async function mountHome({ content }) {
       });
     });
 
-    // daily question
-    const saveBtn = content.querySelector('#dqSave');
-    if (saveBtn) saveBtn.addEventListener('click', async () => {
-      const val = content.querySelector('#dqInput').value.trim();
-      if (!val) { toast('Write a little something 💕', 'error'); return; }
-      saveBtn.disabled = true;
-      await saveTodayAnswer(me, val);
-      await load();
-    });
-
     content.querySelectorAll('[data-go]').forEach((c) =>
       c.addEventListener('click', () => navigate(c.dataset.go)));
   }
@@ -180,32 +160,6 @@ function careBanner(me, cs) {
     ? `Your period's near — rest up, hydrate & be kind to yourself 💗`
     : `${owner.name}'s period is near — be extra gentle, patient & sweet 🍫💗`;
   return `<div class="care-banner">${msg}</div>`;
-}
-
-// Daily couple question card.
-function dailyCard(question, myAnswer, partnerAnswer, partner) {
-  let inner;
-  if (myAnswer) {
-    inner = `
-      <div class="qa-line"><span class="who who--you"><span class="who__dot" style="background:var(--grape)"></span>You</span>
-        <span class="qa-body">${escapeHtml(myAnswer.body)}</span></div>
-      <div class="qa-line"><span class="who who--${partner.key}"><span class="who__dot"></span>${escapeHtml(partner.name)}</span>
-        <span class="qa-body">${partnerAnswer ? escapeHtml(partnerAnswer.body) : `<span class="muted">waiting for ${escapeHtml(partner.name)}… 💭</span>`}</span></div>
-      <a class="daily-link" data-go="/daily">see all our answers →</a>`;
-  } else {
-    inner = `
-      <textarea class="textarea" id="dqInput" maxlength="400" placeholder="your answer…"></textarea>
-      <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
-        <button class="btn btn--primary" id="dqSave">Answer 💌</button>
-        <span class="muted" style="font-size:13px">answer to reveal ${escapeHtml(partner.name)}'s 💞</span>
-      </div>
-      <a class="daily-link" data-go="/daily" style="margin-top:10px">see past answers →</a>`;
-  }
-  return `<div class="card daily-card">
-    <div class="eyebrow">💬 Question of the day</div>
-    <h3 style="margin:6px 0 12px">${escapeHtml(question)}</h3>
-    ${inner}
-  </div>`;
 }
 
 // Inline-SVG sparkline of recent moods for both people.

@@ -3,7 +3,7 @@
 A tiny, cute web app for two — built for **Nirmit & Akkshita**. Track your shared
 spendings, gently follow Akkshita's cycle, leave each other sticky love-notes, keep a
 bucket list of dates, send "thinking of you" taps, collect photo memories, answer a
-**daily couple question**, watch your **mood trends**, get gentle **period-care reminders**,
+save toward shared **goals**, watch your **mood trends**, get gentle **period-care reminders**,
 and count down to **important dates** — all wrapped in drifting petals & soft motion.
 
 Pure HTML/CSS/JS — no build step, no install. Runs in **demo mode** out of the box and
@@ -77,7 +77,6 @@ the backend, so no server needed. Set `login.html` as the entry page.
 | `js/auth.js` | Passcode + profile + shared sign-in |
 | `js/pages/*.js` | One module per screen |
 | `js/effects.js` | Drifting petals + page transitions |
-| `js/questions.js` | Daily-question pool |
 | `styles/*.css` | tokens · base · components · layout · pages |
 | `manifest.webmanifest`, `sw.js` | PWA install + offline shell |
 | `db/schema.sql` | Supabase tables + security + storage |

@@ -8,7 +8,6 @@ import { mountCycle } from './pages/cycle.js';
 import { mountNotes } from './pages/notes.js';
 import { mountBucket } from './pages/bucket.js';
 import { mountMemories } from './pages/memories.js';
-import { mountDaily } from './pages/daily.js';
 import { mountDates } from './pages/dates.js';
 import { mountSavings } from './pages/savings.js';
 import { startPetals } from './effects.js';
@@ -43,7 +42,6 @@ function registerRoutes() {
   route('/bucket',    mountBucket);
   route('/memories',  mountMemories);
   route('/dates',     mountDates);
-  route('/daily',     mountDaily);
   route('/savings',   mountSavings);
 }
 

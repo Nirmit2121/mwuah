@@ -1,12 +1,12 @@
 // Mwuah — tiny offline-first service worker.
-const CACHE = 'mwuah-v2';
+const CACHE = 'mwuah-v3';
 const SHELL = [
   'login.html', 'index.html', 'manifest.webmanifest',
   'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/layout.css', 'styles/pages.css',
   'js/main.js', 'js/config.js', 'js/supabase.js', 'js/api.js', 'js/auth.js', 'js/router.js',
-  'js/state.js', 'js/ui.js', 'js/effects.js', 'js/questions.js',
+  'js/state.js', 'js/ui.js', 'js/effects.js',
   'js/pages/home.js', 'js/pages/expenses.js', 'js/pages/cycle.js', 'js/pages/notes.js',
-  'js/pages/bucket.js', 'js/pages/memories.js', 'js/pages/daily.js', 'js/pages/dates.js', 'js/pages/savings.js',
+  'js/pages/bucket.js', 'js/pages/memories.js', 'js/pages/dates.js', 'js/pages/savings.js',
   'assets/icon.svg',
 ];
 
