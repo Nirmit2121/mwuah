@@ -1,10 +1,10 @@
 // Mwuah — tiny offline-first service worker.
-const CACHE = 'mwuah-v5';
+const CACHE = 'mwuah-v6';
 const SHELL = [
   'login.html', 'index.html', 'manifest.webmanifest',
   'styles/tokens.css', 'styles/base.css', 'styles/components.css', 'styles/layout.css', 'styles/pages.css',
   'js/main.js', 'js/config.js', 'js/supabase.js', 'js/api.js', 'js/auth.js', 'js/router.js',
-  'js/state.js', 'js/ui.js', 'js/effects.js', 'js/medinfo.js',
+  'js/state.js', 'js/ui.js', 'js/effects.js', 'js/medinfo.js', 'js/push.js',
   'js/pages/home.js', 'js/pages/expenses.js', 'js/pages/cycle.js', 'js/pages/notes.js',
   'js/pages/bucket.js', 'js/pages/memories.js', 'js/pages/dates.js', 'js/pages/savings.js', 'js/pages/meds.js',
   'assets/icon.svg',
@@ -52,5 +52,31 @@ self.addEventListener('fetch', (e) => {
         return res;
       }).catch(() => hit)
     )
+  );
+});
+
+// ---------- Web Push ----------
+self.addEventListener('push', (e) => {
+  let data = {};
+  try { data = e.data ? e.data.json() : {}; } catch { data = { body: e.data && e.data.text() }; }
+  const title = data.title || 'Mwuah 💞';
+  e.waitUntil(self.registration.showNotification(title, {
+    body: data.body || '',
+    icon: 'assets/icon-192.png',
+    badge: 'assets/icon-192.png',
+    data: { url: data.url || './index.html' },
+    tag: data.tag || 'mwuah',
+    renotify: true,
+  }));
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const url = (e.notification.data && e.notification.data.url) || './index.html';
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const c of list) { if ('focus' in c) return c.focus(); }
+      return self.clients.openWindow(url);
+    })
   );
 });

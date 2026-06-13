@@ -25,3 +25,7 @@ export const ANNIVERSARY = '2026-05-13';
 
 // Currency symbol for expenses.
 export const CURRENCY = '₹';
+
+// Web Push public key (VAPID). Safe to be public. The matching PRIVATE key lives only
+// as a secret in the Supabase 'notify' Edge Function — never in this file.
+export const VAPID_PUBLIC_KEY = 'BLkuG_6tPbXWdeY46kCS1saVcaZs-ODjyb5X4D5LjdCxCn1WGq1sWtVcZxQmYTb3gwtqpCrqWHWpOEkWG11L5Xw';

@@ -114,6 +114,14 @@ create table if not exists public.med_logs (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.push_subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  profile text not null,                -- 'nirmit' | 'akkshita'
+  endpoint text unique not null,
+  subscription jsonb not null,
+  created_at timestamptz not null default now()
+);
+
 -- helpful indexes for list views
 create index if not exists expenses_spent_idx on public.expenses(spent_on desc);
 create index if not exists cycles_start_idx   on public.cycles(start_date);
@@ -129,7 +137,7 @@ create index if not exists med_logs_day_idx     on public.med_logs(day);
 do $$
 declare t text;
 begin
-  foreach t in array array['expenses','cycles','notes','bucket','moods','taps','memories','events','goals','savings','meds','med_logs']
+  foreach t in array array['expenses','cycles','notes','bucket','moods','taps','memories','events','goals','savings','meds','med_logs','push_subscriptions']
   loop
     execute format('alter table public.%I enable row level security;', t);
     execute format('drop policy if exists "%s_authed_rw" on public.%I;', t, t);

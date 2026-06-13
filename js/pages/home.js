@@ -8,6 +8,7 @@ import { status as medStatus } from './meds.js';
 import { money, todayStr, parseYmd, daysBetween, timeAgo, escapeHtml, heartBurst, prettyDate } from '../ui.js';
 import { toast } from '../state.js';
 import { navigate } from '../router.js';
+import { notifyPartner, enablePush, pushState } from '../push.js';
 
 const MOODS = ['😍', '😊', '😌', '😐', '😴', '😢', '😣', '🥰'];
 const MOOD_SCORE = { '😍': 6, '🥰': 6, '😊': 5, '😌': 4, '😐': 3, '😴': 3, '😣': 2, '😢': 1 };
@@ -71,6 +72,7 @@ export async function mountHome({ content }) {
       </div>
 
       ${careBanner(me, cs)}
+      ${notifPrompt()}
 
       <div class="grid grid--2" style="margin-top:16px">
         <div class="card tap-card">
@@ -118,6 +120,7 @@ export async function mountHome({ content }) {
       const r = e.currentTarget.getBoundingClientRect();
       heartBurst(r.left + r.width / 2, r.top + r.height / 2);
       await taps.create({ author: me.key });
+      notifyPartner('tap');
       toast(`Sent ${partner.name} some love 💕`, 'success');
     });
 
@@ -127,9 +130,16 @@ export async function mountHome({ content }) {
         const mood = b.dataset.m;
         if (myMood) await moods.update(myMood.id, { mood });
         else await moods.create({ author: me.key, mood, day: today });
+        notifyPartner('mood', { mood });
         toast('Mood saved ' + mood, 'success');
         await load();
       });
+    });
+
+    const notifBtn = content.querySelector('#notifBtn');
+    if (notifBtn) notifBtn.addEventListener('click', async () => {
+      const ok = await enablePush();
+      if (ok) render();
     });
 
     content.querySelectorAll('[data-go]').forEach((c) =>
@@ -153,6 +163,19 @@ function miniNote(n) {
   return `<div class="card" style="background:${colors[n.color] || 'var(--note-yellow)'};border:none">
     <div style="font-weight:700;white-space:pre-wrap;word-break:break-word">${escapeHtml((n.body || '').slice(0, 120))}</div>
     <div class="muted" style="font-weight:700;font-size:12px;margin-top:8px">— ${escapeHtml(PEOPLE[n.author]?.name || n.author || '')}</div>
+  </div>`;
+}
+
+// Prompt to switch on phone notifications (hidden once granted / unsupported).
+function notifPrompt() {
+  const state = pushState();
+  if (state === 'granted' || state === 'unsupported' || state === 'denied') return '';
+  const msg = state === 'needs-install'
+    ? `📲 To get notified when ${''}your partner taps or writes — tap <b>Share → Add to Home Screen</b>, then open Mwuah from your home screen and turn on 🔔.`
+    : `🔔 Get a little buzz when your partner taps you, writes a note, or shares a mood.`;
+  const btn = state === 'needs-install' ? '' : `<button class="btn btn--grape btn--sm" id="notifBtn" style="margin-top:10px">Turn on notifications</button>`;
+  return `<div class="care-banner" style="background:linear-gradient(135deg,var(--sky-soft),var(--grape-soft))">
+    <div>${msg}</div>${btn}
   </div>`;
 }
 

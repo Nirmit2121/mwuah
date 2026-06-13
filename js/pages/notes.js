@@ -4,6 +4,7 @@ import { whoami } from '../auth.js';
 import { PEOPLE } from '../config.js';
 import { openModal, escapeHtml } from '../ui.js';
 import { toast } from '../state.js';
+import { notifyPartner } from '../push.js';
 
 const COLORS = ['yellow', 'pink', 'blue', 'green', 'purple'];
 const COLOR_VAR = {
@@ -87,6 +88,7 @@ function openForm(me, onSaved) {
         const text = body.querySelector('#nBody').value.trim();
         if (!text) { toast('Write something first 💕', 'error'); return; }
         await notes.create({ author: me.key, body: text, color });
+        notifyPartner('note', { preview: text.slice(0, 80) });
         toast('Note added 📌', 'success');
         close(); onSaved();
       });
